@@ -1,4 +1,5 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma/index.js";
 
 const router = express.Router();
@@ -99,10 +100,12 @@ router.post("/users/signin", async (req, res) =>{
   }
 
   // password가 맞으면 로그인이 완료된 것이므로 access token을 돌려준다.
-  const accessToken = 'accessToken'; // jwt로 작성 예정
-  
+  const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    expiresIn: '12h',
+  });
+
   // 쿠키에 accessToken 설정
-  res.cookie('accseeToken', accessToken)
+  res.cookie('accessToken', accessToken)
   
   return res.status(200).send({
     message: "로그인 api 입니다.",
@@ -116,8 +119,10 @@ router.post("/users/signin", async (req, res) =>{
 router.get("/users/me", async (req, res) =>{
   // access token으로 userId를 확인한다.
   const accessToken = req.cookies.accessToken;
-  const userId = 1; // jwt를 검증해야하지만 우선 userId=1이라고 가정
-  
+  const tokenData = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+  const userId = tokenData.userId;
+
   // 해당하는 userId로 user가 있는지 확인한다.
   const user = await prisma.users.findFirst({
     where: {

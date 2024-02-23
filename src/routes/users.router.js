@@ -100,7 +100,10 @@ router.post("/users/signin", async (req, res) =>{
 
   // password가 맞으면 로그인이 완료된 것이므로 access token을 돌려준다.
   const accessToken = 'accessToken'; // jwt로 작성 예정
-
+  
+  // 쿠키에 accessToken 설정
+  res.cookie('accseeToken', accessToken)
+  
   return res.status(200).send({
     message: "로그인 api 입니다.",
     data: {

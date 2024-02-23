@@ -39,7 +39,7 @@ router.post("/users/signup", async (req, res) =>{
       message: '존재하는 email입니다.'
     })
   }
-  
+
   // user table에 user를 create한다.
   const user = await prisma.users.create({
     data: {
@@ -60,18 +60,54 @@ router.post("/users/signup", async (req, res) =>{
 });
 
 // 로그인
-router.post("/users/signin", (req, res) =>
+router.post("/users/signin", async (req, res) =>{
   // 이메일과 비밀번호를 받아서 로그인을 시킨다.
+  const { email, password } = req.body;
+  
   // req.body validation
+  if (!email) {
+    return res.status(400).send({
+      message: 'email은 필수 입력값입니다.'
+    })
+  }
+  if (!password) {
+    return res.status(400).send({
+      message: 'password는 필수 입력값입니다.'
+    })
+  }
+
   // 이메일로 user table에서 해당하는 user가 있는지 찾아본다.
-  // user가 없으면 가입되지 않은 user이므로 error를 발생시킨다.
+  const user = await prisma.users.findFirst({
+    where: {
+      email
+    }
+  });
+
+    // user가 없으면 가입되지 않은 user이므로 error를 발생시킨다.
+  if (!user) {
+    return res.status(400).send({
+      message: '가입되지 않은 이메일입니다.'
+    })
+  }
+
   // user가 있으면 password가 맞는지 확인한다.
-  // password가 맞으면 로그인이 완료된 것이므로 access token을 돌려준다.
   // pawwword가 맞지 않으면 올바르지 않은 비밀번호이므로 error를 발생시킨다.
-  res.status(200).send({
+  if (user.password !== password) {
+    return res.status(400).send({
+      message: '비밀번호가 올바르지 않습니다.'
+    })
+  }
+
+  // password가 맞으면 로그인이 완료된 것이므로 access token을 돌려준다.
+  const accessToken = 'accessToken'; // jwt로 작성 예정
+
+  return res.status(200).send({
     message: "로그인 api 입니다.",
+    data: {
+      accessToken
+    }
   })
-);
+});
 
 // 프로필 조회
 router.get("/users/me", (req, res) =>

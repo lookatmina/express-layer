@@ -7,6 +7,8 @@ export default class UserController {
         // 이메일, 비밀번호, 이름을 받아서 회원가입을 시킨다.
         const { email, password, name } = req.body;
     
+        ////////////////////////////////// 여기부터
+
         // req.body validation
         if (!email) {
           return res.status(400).send({
@@ -47,6 +49,10 @@ export default class UserController {
             name
           }
         })
+
+        ////////////////////////////////// 여기까지가 비즈니스 로직
+        // controller는 req.body로 받은 email, password, name을 서비스에 넘겨주고
+        // response할 때 필요한 email, name 값을 서비스로 부터 받아서 response에 넣어주면 된다.
     
         // response로 생성된 user의 이메일과 이름을 돌려준다.
         return res.status(200).send({

@@ -5,12 +5,43 @@ const router = express.Router();
 // 회원가입
 router.post("/users/signup", (req, res) =>{
   // 이메일, 비밀번호, 이름을 받아서 회원가입을 시킨다.
+  const { email, password, name } = req.body;
   // req.body validation
+  if (!email) {
+    res.status(400).send({
+      message: 'email은 필수 입력값입니다.'
+    })
+  }
+  if (!password) {
+    res.status(400).send({
+      message: 'password는 필수 입력값입니다.'
+    })
+  }
+  if (!name) {
+    res.status(400).send({
+      message: 'name은 필수 입력값입니다.'
+    })
+  }
+  
   // eamil 유효성 검사 (중복이 있으면 안됨)
+  const alreadyUser = {}; // prisma를 통해 user를 findFirst하는 함수 작성 예정
+  
+  // user가 존재하면 email이 중복되는 것이기 때문에 error 발생
+  if (alreadyUser) {
+    res.status(400).send({
+      message: '존재하는 email입니다.'
+    })
+  }
   // user table에 user를 create한다.
+  const user = { email, password, name }; // prisma로 create 함수 작성 예정
+
   // response로 생성된 user의 이메일과 이름을 돌려준다.
   res.status(200).send({
     message: "회원가입 api 입니다.",
+    data: {
+      email: user.email,
+      name: user.name
+    }
   })
 });
 

@@ -1,33 +1,16 @@
 import express from "express";
+import UsersRouter from "./src/routes/users.router.js";
 
 const app = express();
 
 app.use(express.json());
 
+// users.router.js로 뺀 라우터들을 불러와서 연결만 해준다.
+app.use("/", [UsersRouter]);
+
 app.get("/", (req, res) =>
   res.status(200).send({
     message: "Welcome to Mina Server 🫶",
-  })
-);
-
-// 회원가입
-app.post("/users/signup", (req, res) =>
-  res.status(200).send({
-    message: "회원가입 api 입니다.",
-  })
-);
-
-// 로그인
-app.post("/users/signin", (req, res) =>
-  res.status(200).send({
-    message: "로그인 api 입니다.",
-  })
-);
-
-// 프로필 조회
-app.get("/users/me", (req, res) =>
-  res.status(200).send({
-    message: "프로필 조회 api 입니다.",
   })
 );
 

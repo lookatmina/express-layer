@@ -9,7 +9,7 @@ export default class UserController {
       try {
         // 이메일, 비밀번호, 이름을 받아서 회원가입을 시킨다.
         const { email, password, name } = req.body;
-console.log(req.body)
+
         // controller는 req.body로 받은 email, password, name을 서비스에 넘겨주고
         const user = await userService.signup(email, password, name);
         // response할 때 필요한 email, name 값을 서비스로 부터 받아서 response에 넣어주면 된다.
@@ -23,8 +23,11 @@ console.log(req.body)
           }
         })
       } catch (e) {
+        // 서비스에서 res.send하지 않고 error를 던지기 때문에 어떤 에러인지 확인하기 위해 수정함
+        console.error(e)
         return res.status(500).send({
-          message: "예기치 못한 서버 에러 발생"
+          message: "예기치 못한 서버 에러 발생",
+          error: e.message
         })
       }
     };

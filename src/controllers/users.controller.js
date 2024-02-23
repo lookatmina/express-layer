@@ -94,7 +94,7 @@ export default class UserController {
             message: '가입되지 않은 이메일입니다.'
           })
         }
-    
+
         // user가 있으면 password가 맞는지 확인한다.
         // pawwword가 맞지 않으면 올바르지 않은 비밀번호이므로 error를 발생시킨다.
         if (user.password !== password) {
@@ -104,7 +104,7 @@ export default class UserController {
         }
     
         // password가 맞으면 로그인이 완료된 것이므로 access token을 돌려준다.
-        const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        const accessToken = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
           expiresIn: '12h',
         });
     

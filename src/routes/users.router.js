@@ -113,13 +113,32 @@ router.post("/users/signin", async (req, res) =>{
 });
 
 // 프로필 조회
-router.get("/users/me", (req, res) =>
+router.get("/users/me", async (req, res) =>{
   // access token으로 userId를 확인한다.
+  const accessToken = req.cookies.accessToken;
+  const userId = 1; // jwt를 검증해야하지만 우선 userId=1이라고 가정
+  
   // 해당하는 userId로 user가 있는지 확인한다.
-  // user가 있다면 이메일과 이름을 돌려준다.
-  res.status(200).send({
-    message: "프로필 조회 api 입니다.",
+  const user = await prisma.users.findFirst({
+    where: {
+      userId
+    }
   })
-);
+
+  // user가 있다면 이메일과 이름을 돌려준다.
+  if (!user) {
+    return res.status(400).send({
+      message: '사용자가 존재하지 않습니다.'
+    })
+  }
+  
+  return res.status(200).send({
+    message: "프로필 조회 api 입니다.",
+    data: {
+      email: user.email,
+      name: user.name
+    }
+  })
+});
 
 export default router;

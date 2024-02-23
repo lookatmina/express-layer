@@ -1,57 +1,17 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma/index.js";
+import UserService from "../services/users.service.js";
+
+const userService = new UserService();
 export default class UserController {
     // 회원가입 라우터랑 연결할 컨트롤러 메서드
     signup = async (req, res, next) => {
       try {
         // 이메일, 비밀번호, 이름을 받아서 회원가입을 시킨다.
         const { email, password, name } = req.body;
-    
-        ////////////////////////////////// 여기부터
-
-        // req.body validation
-        if (!email) {
-          return res.status(400).send({
-            message: 'email은 필수 입력값입니다.'
-          })
-        }
-        if (!password) {
-          return res.status(400).send({
-            message: 'password는 필수 입력값입니다.'
-          })
-        }
-        if (!name) {
-          return res.status(400).send({
-            message: 'name은 필수 입력값입니다.'
-          })
-        }
-         
-        // eamil 유효성 검사 (중복이 있으면 안됨)
-        const alreadyUser = await prisma.users.findFirst({
-          where: {
-            email
-          }
-        });
-        // prisma, @prisma/client 설치 후 명령어 실행: yarn prisma init
-    
-        // user가 존재하면 email이 중복되는 것이기 때문에 error 발생
-        if (alreadyUser) {
-          return res.status(400).send({
-            message: '존재하는 email입니다.'
-          })
-        }
-        
-        // user table에 user를 create한다.
-        const user = await prisma.users.create({
-          data: {
-            email,
-            password,
-            name
-          }
-        })
-
-        ////////////////////////////////// 여기까지가 비즈니스 로직
+console.log(req.body)
         // controller는 req.body로 받은 email, password, name을 서비스에 넘겨주고
+        const user = await userService.signup(email, password, name);
         // response할 때 필요한 email, name 값을 서비스로 부터 받아서 response에 넣어주면 된다.
     
         // response로 생성된 user의 이메일과 이름을 돌려준다.

@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma/index.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -116,7 +117,7 @@ router.post("/users/signin", async (req, res) =>{
 });
 
 // 프로필 조회
-router.get("/users/me", async (req, res) =>{
+router.get("/users/me", authMiddleware, async (req, res) =>{
   // access token으로 userId를 확인한다.
   const accessToken = req.cookies.accessToken;
   const tokenData = jwt.verify(accessToken, process.env.JWT_SECRET);

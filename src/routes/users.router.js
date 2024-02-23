@@ -118,12 +118,9 @@ router.post("/users/signin", async (req, res) =>{
 
 // 프로필 조회
 router.get("/users/me", authMiddleware, async (req, res) =>{
-  // access token으로 userId를 확인한다.
-  const accessToken = req.cookies.accessToken;
-  const tokenData = jwt.verify(accessToken, process.env.JWT_SECRET);
-
-  const userId = tokenData.userId;
-
+  // 미들웨어에서 req.user를 설정해줬으니까 여기서 받아올 수 있음
+  const { userId } = req.user;
+  
   // 해당하는 userId로 user가 있는지 확인한다.
   const user = await prisma.users.findFirst({
     where: {
